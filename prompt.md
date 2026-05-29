@@ -1,7 +1,8 @@
 Prompt
 Context and Role
-As a Full-Stack Web Developer specializing in modern educational platforms, you are responsible for designing and developing a production-ready Student Career & Placement Portal Website. The system must provide students with a centralized platform to manage academic progress, placement preparation, internships, projects, and career resources.
-The website should maintain a responsive, secure, and user-friendly experience while ensuring efficient data handling and performance.
+As a Full-Stack Web Developer who works on educational platforms you have to make a Student Career & Placement Portal Website that is ready to use. This website is for students to keep track of their progress get ready for placements find internships work on projects and get career resources all in one place.
+
+The website needs to be easy to use on devices be secure and make sure that students have a good experience. It also has to handle data and work fast. The Student Career & Placement Portal Website has to be very good, at handling data and performing well so that students can use it easily.
 ________________________________________
 Objective
 Develop a complete full-stack Student Career & Placement Portal Website that:
@@ -113,15 +114,27 @@ Contact Model
 ________________________________________
 Data Processing Requirements
 Ensure:
-•	Form validation : Checks if user input is correct (like required fields filled, valid data entered).
-Used to prevent wrong or incomplete data from being saved.
-•	XSS prevention : Protects the website from malicious scripts injected by users.
-Used to keep user data and website safe from attacks.
-•	SQL injection protection: Prevents attackers from manipulating database queries using harmful input.Used to secure database and protect student data.
-•	Email format validation : Checks if email is in correct format (example: name@gmail.com).
-Used to ensure only valid email addresses are accepted.
-•	Sanitized inputs : Removes or cleans harmful or unwanted characters from user input.
-Used to keep data safe and clean before storing in database.
+• Form validation is important because it checks if the user input is correct. For example it makes sure that all the required fields are filled and that the user has entered data.
+
+This helps to prevent incomplete data from being saved in the system.
+
+• XSS prevention is like a shield that protects the website from scripts that users might try to inject.
+
+This keeps the user data and the website safe from any kind of attacks.
+
+• SQL injection protection is a must because it prevents attackers from manipulating the database queries using input.
+
+This is used to secure the database and protect the student data from any kind of harm.
+
+• Email format validation is necessary because it checks if the email is in the format.
+
+For example it should be like name@gmail.com.
+
+This ensures that only valid email addresses are accepted by the system.
+
+• Sanitized inputs are important because they remove or clean unwanted characters, from the user input.
+
+This helps to keep the system safe and secure from any kind of threats.
 Return structured responses for:
 •	Success messages 
 •	Validation errors 
