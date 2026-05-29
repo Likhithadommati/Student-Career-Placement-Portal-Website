@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Applications - CareerHub{% endblock %}
+
+{% block main_class %}min-vh-100 bg-light py-4{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">
+        <i class="fas fa-briefcase text-primary"></i> My Applications
+    </h2>
+
+    {% if applications %}
+    <div class="table-responsive">
+        <table class="table table-hover bg-white shadow-sm">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th>Position</th>
+                    <th>Company</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Applied Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr>
+                    <td>
+                        <strong>{{ app.opportunity.title }}</strong>
+                    </td>
+                    <td>{{ app.opportunity.company }}</td>
+                    <td>
+                        <span class="badge bg-info">{{ app.opportunity.opportunity_type }}</span>
+                    </td>
+                    <td>{{ app.opportunity.location }}</td>
+                    <td>{{ app.applied_date|date:"M d, Y" }}</td>
+                    <td>
+                        <span class="badge bg-{{ app.status|lower|cut:' ' }}">{{ app.status }}</span>
+                    </td>
+                    <td>
+                        <a href="{% url 'opportunity_detail' app.opportunity.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center" role="alert">
+        <i class="fas fa-inbox fa-3x mb-3"></i>
+        <p>No applications yet. <a href="{% url 'opportunities' %}">Browse opportunities</a></p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

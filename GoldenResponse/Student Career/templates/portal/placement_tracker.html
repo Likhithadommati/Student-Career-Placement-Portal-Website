@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Placement Tracker - CareerHub{% endblock %}
+
+{% block main_class %}min-vh-100 bg-light py-4{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-tasks text-warning"></i> Placement Preparation Tracker</h2>
+            <p class="text-muted">Track your interview and placement preparation journey</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'add_placement_topic' %}" class="btn btn-warning btn-lg">
+                <i class="fas fa-plus"></i> Add Topic
+            </a>
+        </div>
+    </div>
+
+    <!-- Progress Overview -->
+    {% if tracker %}
+    <div class="row mb-4">
+        <div class="col-lg-4">
+            <div class="card shadow-sm text-center p-4">
+                <h3 class="text-warning">{{ total_topics }}</h3>
+                <p class="text-muted">Total Topics</p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm text-center p-4">
+                <h3 class="text-success">{{ completed_topics }}</h3>
+                <p class="text-muted">Completed</p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm text-center p-4">
+                <h3 class="text-info">{{ in_progress_topics }}</h3>
+                <p class="text-muted">In Progress</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overall Progress Bar -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h6>Overall Progress</h6>
+            <div class="progress" style="height: 25px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {% widthratio completed_topics total_topics 100 %}%">
+                    {% widthratio completed_topics total_topics 100 %}%
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Topics by Category -->
+    {% if categories %}
+        {% for category, topics in categories.items %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">{{ category }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Topic</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for topic in topics %}
+                            <tr>
+                                <td>
+                                    <strong>{{ topic.topic_name }}</strong>
+                                    {% if topic.resources_link %}
+                                        <a href="{{ topic.resources_link }}" target="_blank" class="ms-2" title="Resource">
+                                            <i class="fas fa-link text-primary"></i>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ topic.status|lower|cut:' ' }}">{{ topic.status }}</span>
+                                </td>
+                                <td>
+                                    <div class="progress" style="width: 150px; height: 20px;">
+                                        <div class="progress-bar" role="progressbar" style="width: {{ topic.completion_percentage }}%">
+                                            {{ topic.completion_percentage }}%
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{% url 'edit_placement_topic' topic.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'delete_placement_topic' topic.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            <i class="fas fa-inbox fa-3x mb-3"></i>
+            <p class="mb-0">No topics tracked yet. <a href="{% url 'add_placement_topic' %}">Start tracking your preparation!</a></p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    // Update badge color based on status
+    document.querySelectorAll('.badge').forEach(badge => {
+        const status = badge.textContent.toLowerCase().replace(/\s+/g, '-');
+        if (status.includes('not-started')) {
+            badge.className = 'badge bg-secondary';
+        } else if (status.includes('in-progress')) {
+            badge.className = 'badge bg-warning';
+        } else if (status.includes('completed')) {
+            badge.className = 'badge bg-success';
+        } else if (status.includes('reviewed')) {
+            badge.className = 'badge bg-info';
+        }
+    });
+</script>
+{% endblock %}

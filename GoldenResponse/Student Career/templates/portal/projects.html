@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Projects - CareerHub{% endblock %}
+
+{% block main_class %}min-vh-100 bg-light py-4{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-project-diagram text-success"></i> My Projects</h2>
+            <p class="text-muted">Showcase your portfolio and technical expertise</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'add_project' %}" class="btn btn-success btn-lg">
+                <i class="fas fa-plus"></i> Add Project
+            </a>
+        </div>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="row g-4">
+        {% if projects %}
+            {% for project in projects %}
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm">
+                    {% if project.project_image %}
+                    <img src="{{ project.project_image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-image fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">{{ project.project_name }}</h5>
+                            {% if project.is_completed %}
+                                <span class="badge bg-success">Completed</span>
+                            {% else %}
+                                <span class="badge bg-warning">In Progress</span>
+                            {% endif %}
+                        </div>
+                        
+                        <p class="card-text text-muted small mb-3">{{ project.description|truncatewords:20 }}</p>
+                        
+                        <div class="mb-3">
+                            <p class="small mb-2">
+                                <strong>Technologies:</strong>
+                                {% for tech in project.technology_used|slice:":3" %}
+                                    <span class="badge bg-info">{{ tech|trim }}</span>
+                                {% endfor %}
+                            </p>
+                        </div>
+                        
+                        <div class="small text-muted mb-3">
+                            <p class="mb-1">
+                                <i class="fas fa-calendar"></i>
+                                {% if project.end_date %}
+                                    {{ project.start_date|date:"M Y" }} - {{ project.end_date|date:"M Y" }}
+                                {% else %}
+                                    {{ project.start_date|date:"M Y" }} - Present
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="d-flex gap-2 justify-content-between">
+                            {% if project.github_link %}
+                            <a href="{{ project.github_link }}" target="_blank" class="btn btn-sm btn-dark">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                            {% endif %}
+                            {% if project.live_link %}
+                            <a href="{{ project.live_link }}" target="_blank" class="btn btn-sm btn-info">
+                                <i class="fas fa-external-link-alt"></i> Live
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'edit_project' project.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'delete_project' project.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <p class="mb-0">No projects yet. <a href="{% url 'add_project' %}">Add your first project!</a></p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if projects.has_other_pages %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if projects.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ projects.previous_page_number }}">Previous</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in projects.paginator.page_range %}
+                    <li class="page-item {% if num == projects.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if projects.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ projects.next_page_number }}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ projects.paginator.num_pages }}">Last</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

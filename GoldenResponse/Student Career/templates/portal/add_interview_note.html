@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Interview Note - CareerHub{% endblock %}
+
+{% block main_class %}min-vh-100 bg-light py-4{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-lg">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="fas fa-plus"></i> Add Interview Practice Note</h4>
+                </div>
+                <div class="card-body p-5">
+                    {% if question %}
+                    <div class="alert alert-info mb-4">
+                        <h6>Question:</h6>
+                        <p class="mb-0">{{ question.question }}</p>
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if not question %}
+                        <div class="mb-3">
+                            <label for="{{ form.custom_question.id_for_label }}" class="form-label">Your Question (if not using library)</label>
+                            {{ form.custom_question }}
+                        </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.my_answer.id_for_label }}" class="form-label">Your Answer</label>
+                            {{ form.my_answer }}
+                            {% if form.my_answer.errors %}
+                                <div class="invalid-feedback d-block">{{ form.my_answer.errors.0 }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">
+                                Write your complete answer here. Be detailed and clear.
+                            </small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.review_status.id_for_label }}" class="form-label">Self-Assessment</label>
+                            {{ form.review_status }}
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{% url 'interview_notes' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-info">
+                                <i class="fas fa-save"></i> Save Note
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

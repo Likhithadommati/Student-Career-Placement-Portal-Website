@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Opportunities - CareerHub{% endblock %}
+
+{% block main_class %}min-vh-100 bg-light py-4{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-briefcase text-primary"></i> Job & Internship Opportunities
+            </h2>
+        </div>
+    </div>
+
+    <!-- Search & Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="GET" class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search by title, company, or location" value="{{ search_query }}">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form method="GET" class="d-flex gap-2">
+                <select name="type" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Types</option>
+                    <option value="Internship" {% if selected_type == 'Internship' %}selected{% endif %}>Internship</option>
+                    <option value="Full-time" {% if selected_type == 'Full-time' %}selected{% endif %}>Full-time Job</option>
+                    <option value="Part-time" {% if selected_type == 'Part-time' %}selected{% endif %}>Part-time Job</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <!-- Opportunities Grid -->
+    <div class="row g-4">
+        {% if opportunities %}
+            {% for opportunity in opportunities %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm hover-lift">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            {% if opportunity.company_logo %}
+                                <img src="{{ opportunity.company_logo.url }}" alt="{{ opportunity.company }}" style="max-height: 50px;">
+                            {% else %}
+                                <div class="bg-light rounded p-2" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-building text-muted"></i>
+                                </div>
+                            {% endif %}
+                            <span class="badge bg-primary">{{ opportunity.opportunity_type }}</span>
+                        </div>
+                        
+                        <h5 class="card-title">{{ opportunity.title }}</h5>
+                        <h6 class="text-muted mb-2">
+                            <i class="fas fa-building"></i> {{ opportunity.company }}
+                        </h6>
+                        
+                        <p class="card-text small">{{ opportunity.description|truncatewords:20 }}</p>
+                        
+                        <div class="mb-3 small">
+                            <p class="mb-1">
+                                <i class="fas fa-map-marker-alt text-danger"></i> 
+                                <strong>{{ opportunity.location }}</strong>
+                            </p>
+                            {% if opportunity.salary_range %}
+                            <p class="mb-1">
+                                <i class="fas fa-money-bill text-success"></i>
+                                <strong>{{ opportunity.salary_range }}</strong>
+                            </p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <p class="small">
+                                <strong>Skills Required:</strong>
+                                {% for skill in opportunity.required_skills|slice:":3" %}
+                                    <span class="badge bg-info me-1">{{ skill }}</span>
+                                {% endfor %}
+                            </p>
+                        </div>
+                        
+                        <div class="d-flex gap-2 justify-content-between">
+                            <a href="{% url 'opportunity_detail' opportunity.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i> Details
+                            </a>
+                            <a href="{% url 'apply_opportunity' opportunity.id %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-paper-plane"></i> Apply
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <p>No opportunities found. Check back soon!</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if opportunities.has_other_pages %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if opportunities.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if selected_type %}&type={{ selected_type }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ opportunities.previous_page_number }}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Previous</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in opportunities.paginator.page_range %}
+                    <li class="page-item {% if num == opportunities.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if opportunities.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ opportunities.next_page_number }}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ opportunities.paginator.num_pages }}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">Last</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .hover-lift:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}

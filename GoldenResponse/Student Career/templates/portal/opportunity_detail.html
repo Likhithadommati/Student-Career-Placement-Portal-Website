@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ opportunity.title }} - CareerHub{% endblock %}
+
+{% block main_class %}min-vh-100 bg-light py-4{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <a href="{% url 'opportunities' %}" class="btn btn-outline-secondary mb-3">
+                <i class="fas fa-arrow-left"></i> Back to Opportunities
+            </a>
+
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h2 class="mb-2">{{ opportunity.title }}</h2>
+                            <h5 class="text-muted">
+                                <i class="fas fa-building"></i> {{ opportunity.company }}
+                            </h5>
+                        </div>
+                        <div>
+                            <span class="badge bg-primary">{{ opportunity.opportunity_type }}</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Details -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Location</h6>
+                            <p>
+                                <i class="fas fa-map-marker-alt text-danger"></i>
+                                <strong>{{ opportunity.location }}</strong>
+                            </p>
+                        </div>
+                        {% if opportunity.salary_range %}
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Salary Range</h6>
+                            <p>
+                                <i class="fas fa-money-bill text-success"></i>
+                                <strong>{{ opportunity.salary_range }}</strong>
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if opportunity.last_date_to_apply %}
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-calendar"></i>
+                        <strong>Application Deadline:</strong> {{ opportunity.last_date_to_apply|date:"F d, Y" }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-3">Job Description</h6>
+                        <p class="lead">{{ opportunity.description|linebreaks }}</p>
+                    </div>
+
+                    <!-- Required Skills -->
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-3">Required Skills</h6>
+                        <div>
+                            {% for skill in opportunity.required_skills|split:"," %}
+                            <span class="badge bg-info me-2 mb-2">{{ skill|trim }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-3">
+                        {% if not already_applied %}
+                        <form method="POST" action="{% url 'apply_opportunity' opportunity.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane"></i> Apply Now
+                            </button>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-success" role="alert">
+                            <i class="fas fa-check-circle"></i> You have already applied for this opportunity.
+                        </div>
+                        {% endif %}
+                        
+                        <a href="{{ opportunity.job_link }}" target="_blank" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-external-link-alt"></i> View on Company Site
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Similar Opportunities -->
+            <div class="mt-5">
+                <h4 class="mb-4">Similar Opportunities</h4>
+                <div class="row g-3">
+                    <!-- Similar opportunities would be loaded here -->
+                    <div class="col-12">
+                        <a href="{% url 'opportunities' %}?type={{ opportunity.opportunity_type }}" class="btn btn-outline-primary">
+                            View More {{ opportunity.opportunity_type }} Opportunities
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

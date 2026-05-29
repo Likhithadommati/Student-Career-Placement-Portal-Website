@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Placement Topic - CareerHub{% endblock %}
+
+{% block main_class %}min-vh-100 bg-light py-4{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-lg">
+                <div class="card-header bg-warning text-white">
+                    <h4 class="mb-0"><i class="fas fa-plus"></i> Add Placement Preparation Topic</h4>
+                </div>
+                <div class="card-body p-5">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                            {{ form.category }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.topic_name.id_for_label }}" class="form-label">Topic Name</label>
+                            {{ form.topic_name }}
+                            {% if form.topic_name.errors %}
+                                <div class="invalid-feedback d-block">{{ form.topic_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.status.id_for_label }}" class="form-label">Status</label>
+                            {{ form.status }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.completion_percentage.id_for_label }}" class="form-label">Completion Percentage (%)</label>
+                            {{ form.completion_percentage }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.resources_link.id_for_label }}" class="form-label">Resource Link (Tutorial/Course)</label>
+                            {{ form.resources_link }}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.notes.id_for_label }}" class="form-label">Notes</label>
+                            {{ form.notes }}
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{% url 'placement_tracker' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Add Topic
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

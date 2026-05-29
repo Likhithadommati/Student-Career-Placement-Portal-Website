@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Resources - CareerHub{% endblock %}
+
+{% block main_class %}min-vh-100 bg-light py-4{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-2">
+                <i class="fas fa-book text-primary"></i> Learning Resources
+            </h2>
+            <p class="text-muted">Curated collection of learning materials to help you succeed</p>
+        </div>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="GET">
+                <input type="text" name="category" class="form-control" placeholder="Search by category" value="{{ selected_category }}">
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form method="GET">
+                <select name="type" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Types</option>
+                    <option value="Article" {% if selected_type == 'Article' %}selected{% endif %}>Article</option>
+                    <option value="Video" {% if selected_type == 'Video' %}selected{% endif %}>Video</option>
+                    <option value="Course" {% if selected_type == 'Course' %}selected{% endif %}>Course</option>
+                    <option value="Blog" {% if selected_type == 'Blog' %}selected{% endif %}>Blog Post</option>
+                    <option value="Tool" {% if selected_type == 'Tool' %}selected{% endif %}>Tool</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resources Grid -->
+    <div class="row g-4">
+        {% if resources %}
+            {% for resource in resources %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title mb-0">{{ resource.title }}</h5>
+                            <span class="badge bg-primary">{{ resource.resource_type }}</span>
+                        </div>
+                        
+                        <p class="card-text text-muted mb-2">{{ resource.description|truncatewords:20 }}</p>
+                        
+                        <p class="small text-muted mb-3">
+                            <span class="badge bg-secondary">{{ resource.category }}</span>
+                        </p>
+                        
+                        <a href="{{ resource.url }}" target="_blank" class="btn btn-primary btn-sm w-100">
+                            <i class="fas fa-external-link-alt"></i> Access Resource
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <p class="mb-0">No resources found in this category.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if resources.has_other_pages %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if resources.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ resources.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">Previous</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in resources.paginator.page_range %}
+                    <li class="page-item {% if num == resources.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if resources.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ resources.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ resources.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">Last</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

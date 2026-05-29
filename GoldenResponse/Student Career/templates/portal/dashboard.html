@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - CareerHub{% endblock %}
+
+{% block main_class %}min-vh-100 bg-light{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <h5 class="alert-heading">Welcome back, {{ user.first_name }}!</h5>
+                <p>Keep up with your placement preparation and explore new opportunities.</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card text-center p-4 bg-white rounded shadow-sm">
+                <i class="fas fa-code fa-3x text-primary mb-2"></i>
+                <h6 class="text-muted">Skills</h6>
+                <h3 class="text-primary">{{ skills_count }}</h3>
+                <a href="{% url 'skills' %}" class="btn btn-sm btn-primary mt-2">Manage</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center p-4 bg-white rounded shadow-sm">
+                <i class="fas fa-project-diagram fa-3x text-success mb-2"></i>
+                <h6 class="text-muted">Projects</h6>
+                <h3 class="text-success">{{ projects_count }}</h3>
+                <a href="{% url 'projects' %}" class="btn btn-sm btn-success mt-2">View</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center p-4 bg-white rounded shadow-sm">
+                <i class="fas fa-tasks fa-3x text-warning mb-2"></i>
+                <h6 class="text-muted">Prep Topics</h6>
+                <h3 class="text-warning">{{ completed_topics }}/{{ total_topics }}</h3>
+                <a href="{% url 'placement_tracker' %}" class="btn btn-sm btn-warning mt-2">Track</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center p-4 bg-white rounded shadow-sm">
+                <i class="fas fa-briefcase fa-3x text-danger mb-2"></i>
+                <h6 class="text-muted">Applications</h6>
+                <h3 class="text-danger">{{ recent_applications|length }}</h3>
+                <a href="{% url 'my_applications' %}" class="btn btn-sm btn-danger mt-2">View</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row g-4">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- Profile Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">My Profile</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            {% if student.profile_picture %}
+                                <img src="{{ student.profile_picture.url }}" class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+                            {% else %}
+                                <div class="bg-light rounded-circle mb-3 d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+                                    <i class="fas fa-user fa-4x text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-9">
+                            <h5>{{ student.full_name }}</h5>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-envelope"></i> {{ user.email }}
+                            </p>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-university"></i> {{ student.college }}
+                            </p>
+                            <p class="text-muted mb-3">
+                                <i class="fas fa-book"></i> {{ student.get_semester_display }}
+                            </p>
+                            {% if student.cgpa %}
+                            <p class="text-muted mb-3">
+                                <i class="fas fa-star"></i> CGPA: <strong>{{ student.cgpa }}</strong>
+                            </p>
+                            {% endif %}
+                            <a href="{% url 'profile' %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit"></i> Edit Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Projects -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Recent Projects</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_projects %}
+                        {% for project in recent_projects %}
+                        <div class="mb-3 pb-3 border-bottom">
+                            <h6>{{ project.project_name }}</h6>
+                            <p class="text-muted small mb-2">{{ project.description|truncatewords:15 }}</p>
+                            <p class="small">
+                                <span class="badge bg-info">{{ project.technology_used }}</span>
+                                {% if project.is_completed %}
+                                    <span class="badge bg-success">Completed</span>
+                                {% else %}
+                                    <span class="badge bg-warning">In Progress</span>
+                                {% endif %}
+                            </p>
+                            <a href="{% url 'edit_project' project.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        </div>
+                        {% endfor %}
+                        <a href="{% url 'projects' %}" class="btn btn-primary btn-sm">View All Projects</a>
+                    {% else %}
+                        <p class="text-muted">No projects yet. <a href="{% url 'add_project' %}">Add your first project!</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Quick Actions -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'add_skill' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus text-primary"></i> Add Skill
+                    </a>
+                    <a href="{% url 'add_project' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus text-success"></i> Add Project
+                    </a>
+                    <a href="{% url 'add_placement_topic' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus text-warning"></i> Add Prep Topic
+                    </a>
+                    <a href="{% url 'opportunities' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-briefcase text-danger"></i> Explore Opportunities
+                    </a>
+                    <a href="{% url 'interview_prep' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-question-circle text-info"></i> Interview Prep
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Applications -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Recent Applications</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_applications %}
+                        {% for app in recent_applications %}
+                        <div class="mb-2 pb-2 border-bottom">
+                            <h6 class="small">{{ app.opportunity.title }}</h6>
+                            <p class="text-muted small mb-1">{{ app.opportunity.company }}</p>
+                            <span class="badge bg-{{ app.status|lower }}">{{ app.status }}</span>
+                        </div>
+                        {% endfor %}
+                        <a href="{% url 'my_applications' %}" class="btn btn-danger btn-sm w-100 mt-2">View All</a>
+                    {% else %}
+                        <p class="text-muted small">No applications yet. <a href="{% url 'opportunities' %}">Browse opportunities</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

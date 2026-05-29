@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - Student Career Portal{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero-section bg-gradient text-white py-5">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">Welcome to CareerHub</h1>
+            <p class="lead mb-4">Your Complete Platform for Academic Excellence and Career Success</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg me-2">
+                    <i class="fas fa-chart-line"></i> Go to Dashboard
+                </a>
+            {% else %}
+                <a href="{% url 'register' %}" class="btn btn-light btn-lg me-2">
+                    <i class="fas fa-user-plus"></i> Get Started
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Why Choose CareerHub?</h2>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card text-center p-4">
+                        <i class="fas fa-briefcase fa-3x text-primary mb-3"></i>
+                        <h5>Job Opportunities</h5>
+                        <p>Browse and apply for internships and job opportunities from top companies.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card text-center p-4">
+                        <i class="fas fa-code fa-3x text-primary mb-3"></i>
+                        <h5>Skill Tracking</h5>
+                        <p>Track your skills, projects, and technical knowledge development.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card text-center p-4">
+                        <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+                        <h5>Interview Prep</h5>
+                        <p>Access interview questions and prepare with our comprehensive question library.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card text-center p-4">
+                        <i class="fas fa-chart-pie fa-3x text-primary mb-3"></i>
+                        <h5>Progress Tracking</h5>
+                        <p>Monitor your placement preparation progress and achieve your goals.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    {% if not user.is_authenticated %}
+    <section class="bg-light py-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <h3 class="text-primary">{{ total_students }}+</h3>
+                    <p class="lead">Students Registered</p>
+                </div>
+                <div class="col-md-4">
+                    <h3 class="text-primary">{{ total_opportunities }}+</h3>
+                    <p class="lead">Active Opportunities</p>
+                </div>
+                <div class="col-md-4">
+                    <h3 class="text-primary">100%</h3>
+                    <p class="lead">Success Rate</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Interview Questions Preview -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Featured Interview Questions</h2>
+            <div class="row g-4">
+                {% for question in interview_questions %}
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-success">{{ question.category }}</span>
+                                <span class="badge bg-warning">{{ question.difficulty }}</span>
+                            </div>
+                            <h5 class="card-title">{{ question.question|truncatewords:15 }}</h5>
+                            <p class="card-text text-muted">{{ question.answer|truncatewords:20 }}</p>
+                            {% if question.company %}
+                            <small class="text-muted">Asked by: <strong>{{ question.company }}</strong></small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if user.is_authenticated %}
+            <div class="text-center mt-4">
+                <a href="{% url 'interview_prep' %}" class="btn btn-primary btn-lg">
+                    View All Questions <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Learning Resources</h2>
+            <div class="row g-4">
+                {% for resource in resources %}
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ resource.title }}</h5>
+                            <p class="card-text text-muted">{{ resource.description|truncatewords:20 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-info">{{ resource.resource_type }}</span>
+                                <a href="{{ resource.url }}" target="_blank" class="btn btn-sm btn-primary">
+                                    View <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-4">
+                <a href="{% url 'resources' %}" class="btn btn-primary btn-lg">
+                    Explore All Resources <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="bg-primary text-white py-5">
+        <div class="container text-center">
+            <h2 class="mb-3">Ready to Start Your Career Journey?</h2>
+            <p class="lead mb-4">Join thousands of students who are preparing for their dream jobs</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg">
+                    <i class="fas fa-arrow-right"></i> Go to Dashboard
+                </a>
+            {% else %}
+                <a href="{% url 'register' %}" class="btn btn-light btn-lg">
+                    <i class="fas fa-user-plus"></i> Register Now
+                </a>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Have Questions?</h2>
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card shadow-lg">
+                        <div class="card-body p-5">
+                            <p class="lead mb-4">We're here to help! Send us your feedback or questions.</p>
+                            <a href="{% url 'contact' %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-envelope"></i> Contact Us
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
